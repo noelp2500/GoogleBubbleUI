@@ -36,6 +36,7 @@ const AppRenderLayer = ({ data }) => {
   const [keyInput, setKeyInput] = useState();
   const [keywordSelected, setKeywordSelected] = useState();
   const [googleOrBubble, setGoogleOrBubble] = useState(true);
+  const [websiteSelected, setWebsiteSelected] = useState();
 
   const handleLevelOne = (bub) => {
     setKeywordSelected(bub);
@@ -45,6 +46,13 @@ const AppRenderLayer = ({ data }) => {
   };
 
   const handleLevelTwo = (bub) => {
+    console.log("bub", bub);
+    console.log("level2data", keywordBasedData);
+    const summaryInfoOfWebsite = keywordBasedData.filter(
+      (item) => item["title"].includes(bub) || item["link"].includes(bub)
+    );
+
+    setWebsiteSelected(summaryInfoOfWebsite);
     setLoad("level3");
     setBack(true);
   };
@@ -104,6 +112,7 @@ const AppRenderLayer = ({ data }) => {
     } else {
       // console.log("val", val);
       // let summaryResultArray=[]
+      console.log("_________________________");
       const summaryResultArray = data[keywordSelected].filter((summaryData) => {
         return containsWord(summaryData["WebsiteContentSummary"], val);
       });
@@ -169,7 +178,7 @@ const AppRenderLayer = ({ data }) => {
                   />
                 ))
               : load === "level3"
-              ? Object.values(keywordBasedData)?.map((keywordResult, i) => (
+              ? Object.values(websiteSelected)?.map((keywordResult, i) => (
                   <ChildComponent
                     data={keywordResult["WebsiteContentSummary"]}
                     className="child"
