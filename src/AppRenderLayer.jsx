@@ -38,18 +38,31 @@ const AppRenderLayer = ({ data }) => {
   const [googleOrBubble, setGoogleOrBubble] = useState(true);
   const [websiteSelected, setWebsiteSelected] = useState();
 
+  const websiteCleaningRegex = /https:\/\/([^/]+)/g;
+
   const handleLevelOne = (bub) => {
     setKeywordSelected(bub);
+    data[bub].map((websites) => {
+      const matches = websites["link"].match(websiteCleaningRegex);
+      if (matches) {
+        const words = matches.map((match) => {
+          const [, word] = match.match(/https:\/\/([^/]+)/);
+          return word;
+        });
+        websites["link"] = words;
+      }
+      return websites;
+    });
     setKeywordBasedData(data[bub]);
     setLoad("level2");
     setBack(true);
   };
 
   const handleLevelTwo = (bub) => {
-    console.log("bub", bub);
-    console.log("level2data", keywordBasedData);
+    // console.log("bub", bub);
+    // console.log("level2data", keywordBasedData);
     const summaryInfoOfWebsite = keywordBasedData.filter(
-      (item) => item["title"].includes(bub) || item["link"].includes(bub)
+      (item) => item["title"].includes(bub) || item["domain"].includes(bub)
     );
 
     setWebsiteSelected(summaryInfoOfWebsite);
@@ -74,14 +87,14 @@ const AppRenderLayer = ({ data }) => {
 
   const options = {
     size: load === "level1" ? 100 : load === "level2" ? 250 : 600,
-    minSize: 20,
+    minSize: 50,
     gutter: 18,
     provideProps: true,
-    numCols: 6,
+    numCols: 14,
     fringeWidth: 45,
     cornerRadius: 50,
     showGuides: false,
-    compact: true,
+    compact: false,
     gravitation: 5,
   };
 
