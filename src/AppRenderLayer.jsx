@@ -5,6 +5,7 @@ import ChildComponent from "./childComponent";
 // import { Audio } from "react-loader-spinner";
 import "./styles.css";
 import GoogleUIRenderLayer from "./googleUIRenderLayer";
+import Draggable from "react-draggable";
 
 // function containsWord(array, word) {
 //   console.log("4",array,word)
@@ -41,33 +42,37 @@ const AppRenderLayer = ({ data }) => {
   const websiteCleaningRegex = /https:\/\/([^/]+)/g;
 
   const handleLevelOne = (bub) => {
-    setKeywordSelected(bub);
-    data[bub].map((websites) => {
-      const matches = websites["link"].match(websiteCleaningRegex);
-      if (matches) {
-        const words = matches.map((match) => {
-          const [, word] = match.match(/https:\/\/([^/]+)/);
-          return word;
-        });
-        websites["link"] = words;
-      }
-      return websites;
-    });
-    setKeywordBasedData(data[bub]);
-    setLoad("level2");
-    setBack(true);
+    if (bub) {
+      setKeywordSelected(bub);
+      data[bub].map((websites) => {
+        const matches = websites["link"].match(websiteCleaningRegex);
+        if (matches) {
+          const words = matches.map((match) => {
+            const [, word] = match.match(/https:\/\/([^/]+)/);
+            return word;
+          });
+          websites["link"] = words;
+        }
+        return websites;
+      });
+      setKeywordBasedData(data[bub]);
+      setLoad("level2");
+      setBack(true);
+    }
   };
 
   const handleLevelTwo = (bub) => {
     // console.log("bub", bub);
     // console.log("level2data", keywordBasedData);
-    const summaryInfoOfWebsite = keywordBasedData.filter(
-      (item) => item["title"].includes(bub) || item["domain"].includes(bub)
-    );
+    if (bub) {
+      const summaryInfoOfWebsite = keywordBasedData.filter(
+        (item) => item["title"].includes(bub) || item["domain"].includes(bub)
+      );
 
-    setWebsiteSelected(summaryInfoOfWebsite);
-    setLoad("level3");
-    setBack(true);
+      setWebsiteSelected(summaryInfoOfWebsite);
+      setLoad("level3");
+      setBack(true);
+    }
   };
 
   const handleBackButtonOperation = (event) => {
@@ -152,6 +157,10 @@ const AppRenderLayer = ({ data }) => {
     setGoogleOrBubble(!googleOrBubble);
   };
 
+  const handleDrag = (e, ui) => {
+    // Handle dragging logic here if needed
+  };
+
   return (
     <>
       <button onClick={handleUISwitch}>
@@ -179,39 +188,46 @@ const AppRenderLayer = ({ data }) => {
           ) : (
             <></>
           )}
-          <BubbleUI options={options} className="myBubbleUI">
-            {}
-            {load === "level2"
-              ? Object.values(keywordBasedData)?.map((keywordResult, i) => (
-                  <ChildComponent
-                    data={keywordResult["link"]}
-                    className="child"
-                    key={i}
-                    setClick={handleLevelTwo}
-                  />
-                ))
-              : load === "level3"
-              ? Object.values(websiteSelected)?.map((keywordResult, i) => (
-                  <ChildComponent
-                    data={keywordResult["WebsiteContentSummary"]}
-                    className="child"
-                    key={i}
-                    setClick={() => {}}
-                  />
-                ))
-              : load === "level1" &&
-                Object.keys(keywordData)?.map(
-                  (keyword, i) =>
-                    keywordData[keyword].length > 0 && (
-                      <ChildComponent
-                        data={keyword}
-                        className="child"
-                        key={i}
-                        setClick={handleLevelOne}
-                      />
-                    )
-                )}
-          </BubbleUI>
+
+          <Draggable
+            defaultPosition={{ x: 0, y: 0 }}
+            grid={[1, 1]}
+            onStop={handleDrag}
+          >
+            <BubbleUI options={options} className="myBubbleUI">
+              {load === "level2"
+                ? Object.values(keywordBasedData)?.map((keywordResult, i) => (
+                    <ChildComponent
+                      data={keywordResult["link"]}
+                      className="child"
+                      key={i}
+                      setClick={handleLevelTwo}
+                    />
+                  ))
+                : load === "level3"
+                ? Object.values(websiteSelected)?.map((keywordResult, i) => (
+                    <ChildComponent
+                      data={keywordResult["WebsiteContentSummary"]}
+                      className="child"
+                      key={i}
+                      setClick={() => {}}
+                    />
+                  ))
+                : load === "level1" &&
+                  Object.keys(keywordData)?.map(
+                    (keyword, i) =>
+                      keywordData[keyword].length > 0 && (
+                        <ChildComponent
+                          data={keyword}
+                          fullData={keywordData[keyword]}
+                          className="child"
+                          key={i}
+                          setClick={handleLevelOne}
+                        />
+                      )
+                  )}
+            </BubbleUI>
+          </Draggable>
           {/* {load && (
         <>
           <div>Clicked bubble: {bubble}</div>
