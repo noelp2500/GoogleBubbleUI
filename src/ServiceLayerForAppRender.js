@@ -11,6 +11,7 @@ export default function ServiceLayerForAppRender() {
     const result = { None: [] };
     imptData["organic_results"].forEach((data) => {
       if (Array.isArray(data.AIGeneratedKeywords)) {
+        data.AIGeneratedKeywords = [data.AIGeneratedKeywords[0]];
         data.AIGeneratedKeywords.forEach((keyword) => {
           if (keyword.replace(/'/g, "") in result) {
             result[keyword.replace(/'/g, "")].push(data);

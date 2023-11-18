@@ -8,7 +8,7 @@ import GoogleUIRenderLayer from "./googleUIRenderLayer";
 import Draggable from "react-draggable";
 
 // function containsWord(array, word) {
-//   console.log("4",array,word)
+//   //console.log("4",array,word)
 //   const lowercaseWord = word.toLowerCase();
 //   for (const element of array) {
 //     const words = element.toLowerCase().split(/\s+/);
@@ -45,7 +45,7 @@ const AppRenderLayer = ({ data }) => {
     if (bub) {
       setKeywordSelected(bub);
       data[bub].map((websites) => {
-        const matches = websites["link"].match(websiteCleaningRegex);
+        const matches = websites["link"].toString().match(websiteCleaningRegex);
         if (matches) {
           const words = matches.map((match) => {
             const [, word] = match.match(/https:\/\/([^/]+)/);
@@ -62,13 +62,11 @@ const AppRenderLayer = ({ data }) => {
   };
 
   const handleLevelTwo = (bub) => {
-    // console.log("bub", bub);
-    // console.log("level2data", keywordBasedData);
+    //console.log("bub,", bub);
     if (bub) {
       const summaryInfoOfWebsite = keywordBasedData.filter(
         (item) => item["title"].includes(bub) || item["domain"].includes(bub)
       );
-
       setWebsiteSelected(summaryInfoOfWebsite);
       setLoad("level3");
       setBack(true);
@@ -77,15 +75,17 @@ const AppRenderLayer = ({ data }) => {
 
   const handleBackButtonOperation = (event) => {
     event.preventDefault();
-    // console.log("load", load);
     if (load === "level2") {
       setBack(true);
+      //console.log("level1Transfer");
       setLoad("level1");
     }
     if (load === "level3") {
+      //console.log("level2Transfer");
       setLoad("level2");
     }
     if (load === "level1") {
+      //console.log("Nrom");
       setBack(false);
     }
   };
@@ -128,9 +128,9 @@ const AppRenderLayer = ({ data }) => {
       }
       setKeywordData(filteredResults);
     } else {
-      // console.log("val", val);
+      // //console.log("val", val);
       // let summaryResultArray=[]
-      console.log("_________________________");
+      //console.log("_________________________");
       const summaryResultArray = data[keywordSelected].filter((summaryData) => {
         return containsWord(summaryData["WebsiteContentSummary"], val);
       });
@@ -144,7 +144,7 @@ const AppRenderLayer = ({ data }) => {
       // if (filteredItems.length > 0) {
       //   filteredResults[keywordSelected] = filteredItems;
       // }
-      // console.log("filt",summaryResultArray)
+      // //console.log("filt",summaryResultArray)
       setKeywordBasedData(summaryResultArray);
     }
   };
@@ -157,9 +157,9 @@ const AppRenderLayer = ({ data }) => {
     setGoogleOrBubble(!googleOrBubble);
   };
 
-  const handleDrag = (e, ui) => {
-    // Handle dragging logic here if needed
-  };
+  // const handleDrag = (e, ui) => {
+  //   // Handle dragging logic here if needed
+  // };
 
   return (
     <>
@@ -192,7 +192,7 @@ const AppRenderLayer = ({ data }) => {
           <Draggable
             defaultPosition={{ x: 0, y: 0 }}
             grid={[1, 1]}
-            onStop={handleDrag}
+            //onStop={handleDrag}
           >
             <BubbleUI options={options} className="myBubbleUI">
               {load === "level2"
