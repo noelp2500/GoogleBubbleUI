@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import Draggable from "react-draggable";
 
 export default function ChildComponent({ data, setClick, key, fullData }) {
   const [clickCount, setClickCount] = useState(0);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const elementRef = useRef(null);
 
   useEffect(() => {
     if (clickCount === 1) {
@@ -20,15 +23,26 @@ export default function ChildComponent({ data, setClick, key, fullData }) {
     }
   }, [clickCount]);
 
+  const onDrag = (e, ui) => {
+    setTimeout(() => {
+      setPosition({ x: ui.x, y: ui.y });
+      // checkCombine(ui.x, ui.y);
+    }, 5000);
+  };
+
   return (
-    <div
-      key={key}
-      className="childComponent"
-      onClick={() => {
-        setClickCount(clickCount + 1);
-      }}
-    >
-      {data}
-    </div>
+    <Draggable onDrag={onDrag}>
+      <div
+        ref={elementRef}
+        style={{ left: position.x, top: position.y }}
+        key={key}
+        className="childComponent"
+        onClick={() => {
+          setClickCount(clickCount + 1);
+        }}
+      >
+        {data}
+      </div>
+    </Draggable>
   );
 }
