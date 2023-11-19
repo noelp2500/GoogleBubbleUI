@@ -44,7 +44,10 @@ const AppRenderLayer = ({ data }) => {
   const handleLevelOne = (bub) => {
     if (bub) {
       setKeywordSelected(bub);
-      data[bub].map((websites) => {
+      let filteredKeywordData = Object.keys(keywordData)
+        .filter((key) => key.includes(bub))
+        .filter((element) => element.includes("+"));
+      keywordData[filteredKeywordData[0] || bub].map((websites) => {
         const matches = websites["link"].toString().match(websiteCleaningRegex);
         if (matches) {
           const words = matches.map((match) => {
@@ -55,7 +58,7 @@ const AppRenderLayer = ({ data }) => {
         }
         return websites;
       });
-      setKeywordBasedData(data[bub]);
+      setKeywordBasedData(keywordData[filteredKeywordData[0] || bub]);
       setLoad("level2");
       setBack(true);
     }
@@ -219,7 +222,8 @@ const AppRenderLayer = ({ data }) => {
                       keywordData[keyword].length > 0 && (
                         <ChildComponent
                           data={keyword}
-                          fullData={keywordData[keyword]}
+                          fullData={keywordData}
+                          setFullData={setKeywordData}
                           className="child"
                           key={i}
                           setClick={handleLevelOne}
